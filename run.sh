@@ -1,5 +1,36 @@
 #!/bin/bash
 
+kopia_ui_user="${KOPIA_UI_USER}"
+source_server="${SOURCE_SERVER}"
+source_user="${SOURCE_USER}"
+target_server="${TARGET_SERVER}"
+target_user="${TARGET_USER}"
+
+if [[ -n "${KOPIA_UI_PASS_SECRET_PATH}" ]]; then
+	echo "Reading kopia_ui_pass from ${KOPIA_UI_PASS_SECRET_PATH}"
+	kopia_ui_pass=$(<"${KOPIA_UI_PASS_SECRET_PATH}")
+fi
+
+if [[ -n "${SOURCE_PASS_SECRET_PATH}" ]]; then
+	echo "Reading source_pass from ${SOURCE_PASS_SECRET_PATH}"
+	source_pass=$(<"${SOURCE_PASS_SECRET_PATH}")
+fi
+
+if [[ -n "${REPO_PASS_SECRET_PATH}" ]]; then
+	echo "Reading repo_pass from ${REPO_PASS_SECRET_PATH}"
+	repo_pass=$(<"${REPO_PASS_SECRET_PATH}")
+fi
+
+if [[ -n "${TARGET_PASS_SECRET_PATH}" ]]; then
+	echo "Reading target_pass from ${TARGET_PASS_SECRET_PATH}"
+	target_pass=$(<"${TARGET_PASS_SECRET_PATH}")
+fi
+
+if [[ -n "${B2_RECONNECT_TOKEN_SECRET_PATH}" ]]; then
+	echo "Reading b2_reconnect_token from ${B2_RECONNECT_TOKEN_SECRET_PATH}"
+	b2_reconnect_token=$(<"${B2_RECONNECT_TOKEN_SECRET_PATH}")
+fi
+
 while [[ "$#" -gt 0 ]]
 	do
 		case $1 in
@@ -69,4 +100,5 @@ elif [[ $b2_reconnect_token ]]; then
 	kopia server start --insecure --address=0.0.0.0:51515 --server-username=kopia --server-password=kopia
 else
 	echo "No target SMB share or B2 bucket given. Exiting."
+	exit 1
 fi
