@@ -94,10 +94,10 @@ if [[ $target_server ]] && [[ $target_user ]] && [[ $target_pass ]]; then
 	ls /mnt/target
 
 	kopia repository connect filesystem --path=/mnt/target --override-hostname=kopia --override-username=kopia --password=$repo_pass
-	kopia server start --insecure --address=0.0.0.0:51515 --server-username=kopia --server-password=kopia
+	kopia server start --insecure --address=0.0.0.0:51515 --server-username=$kopia_ui_user --server-password=$kopia_ui_pass
 elif [[ $b2_reconnect_token ]]; then
 	kopia repository connect from-config --token=$b2_reconnect_token --override-hostname=kopia --override-username=kopia
-	kopia server start --insecure --address=0.0.0.0:51515 --server-username=kopia --server-password=kopia
+	kopia server start --insecure --address=0.0.0.0:51515 --server-username=$kopia_ui_user --server-password=$kopia_ui_pass
 else
 	echo "No target SMB share or B2 bucket given. Exiting."
 	exit 1
