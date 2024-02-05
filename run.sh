@@ -16,14 +16,14 @@ if [[ -n "${SOURCE_PASS_SECRET_PATH}" ]]; then
 	source_pass=$(<"${SOURCE_PASS_SECRET_PATH}")
 fi
 
-if [[ -n "${REPO_PASS_SECRET_PATH}" ]]; then
-	echo "Reading repo_pass from ${REPO_PASS_SECRET_PATH}"
-	repo_pass=$(<"${REPO_PASS_SECRET_PATH}")
-fi
-
 if [[ -n "${TARGET_PASS_SECRET_PATH}" ]]; then
 	echo "Reading target_pass from ${TARGET_PASS_SECRET_PATH}"
 	target_pass=$(<"${TARGET_PASS_SECRET_PATH}")
+fi
+
+if [[ -n "${REPO_PASS_SECRET_PATH}" ]]; then
+	echo "Reading repo_pass from ${REPO_PASS_SECRET_PATH}"
+	repo_pass=$(<"${REPO_PASS_SECRET_PATH}")
 fi
 
 if [[ -n "${B2_RECONNECT_TOKEN_SECRET_PATH}" ]]; then
@@ -39,10 +39,10 @@ while [[ "$#" -gt 0 ]]
 			--source_server) source_server="$2"; shift;;
 			--source_user) source_user="$2"; shift;;
 			--source_pass) source_pass="$2"; shift;;
-			--repo_pass) repo_pass="$2"; shift;;
 			--target_server) target_server="$2"; shift;;
 			--target_user) target_user="$2"; shift;;
 			--target_pass) target_pass="$2"; shift;;
+			--repo_pass) repo_pass="$2"; shift;;
 			--b2_reconnect_token) b2_reconnect_token="$2"; shift;;
 		esac
 	shift
@@ -73,18 +73,13 @@ if [[ -z $source_pass ]]; then
 	exit 1
 fi
 
-if [[ -z $repo_pass ]]; then
-	echo "--repo_pass Repo password must not be empty!"
-	exit 1
-fi
-
 echo "Mounting source SMB share $source_server"
 mkdir /mnt/source
 mount -t cifs $source_server /mnt/source -o ro,username=$source_user,password=$source_pass
 echo "Listing files in /mnt/source"
 ls /mnt/source
 
-if [[ $target_server ]] && [[ $target_user ]] && [[ $target_pass ]]; then
+if [[ $target_server ]] && [[ $target_user ]] && [[ $target_pass ]] && [[ $repo_pass ]]; then
 	echo "Mounting target SMB share $target_server"
 	mkdir /mnt/target
 	# noserverino is necessary if a Fritzbox USB/NAS SMB share is used, otherwise there is an error "Stale file handle" when reading data

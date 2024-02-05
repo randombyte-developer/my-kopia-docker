@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  kopia:
+    extends:
+      file: base.yml
+      service: kopia
+        ports:
+          - "2000:51515"
+        # enables the container to mount SMB/CIFS share
+        cap_add:
+          - SYS_ADMIN
+          - DAC_READ_SEARCH
+        environment:
+          TARGET_SERVER: ${TARGET_SERVER}
+          TARGET_USER: ${TARGET_USER}
+          TARGET_PASS_SECRET_PATH: ${TARGET_PASS_SECRET_PATH}
+          REPO_PASS_SECRET_PATH: ${REPO_PASS_SECRET_PATH}
+        secrets:
+          - TARGET_PASS
+          - REPO_PASS
+  TARGET_PASS:
+    external: true
+  REPO_PASS:
+    external: true
+    

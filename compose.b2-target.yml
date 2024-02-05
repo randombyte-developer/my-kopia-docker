@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  kopia:
+    extends:
+      file: base.yml
+      service: kopia
+        ports:
+          - "3000:51515"
+        environment:
+          B2_RECONNECT_TOKEN_SECRET_PATH: ${B2_RECONNECT_TOKEN_SECRET_PATH}
+        secrets:
+          - B2_RECONNECT_TOKEN
+  B2_RECONNECT_TOKEN:
+    external: true
+    
