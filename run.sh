@@ -9,25 +9,21 @@ target_user="${TARGET_USER}"
 if [[ -n "${KOPIA_UI_PASS_SECRET_PATH}" ]]; then
 	echo "Reading kopia_ui_pass from ${KOPIA_UI_PASS_SECRET_PATH}"
 	kopia_ui_pass=$(<"${KOPIA_UI_PASS_SECRET_PATH}")
-	echo $kopia_ui_pass
 fi
 
 if [[ -n "${SOURCE_PASS_SECRET_PATH}" ]]; then
 	echo "Reading source_pass from ${SOURCE_PASS_SECRET_PATH}"
 	source_pass=$(<"${SOURCE_PASS_SECRET_PATH}")
-	echo $source_pass
 fi
 
 if [[ -n "${REPO_PASS_SECRET_PATH}" ]]; then
 	echo "Reading repo_pass from ${REPO_PASS_SECRET_PATH}"
 	repo_pass=$(<"${REPO_PASS_SECRET_PATH}")
-	echo $repo_pass
 fi
 
 if [[ -n "${TARGET_PASS_SECRET_PATH}" ]]; then
 	echo "Reading target_pass from ${TARGET_PASS_SECRET_PATH}"
 	target_pass=$(<"${TARGET_PASS_SECRET_PATH}")
-	echo $target_pass
 fi
 
 if [[ -n "${B2_RECONNECT_TOKEN_SECRET_PATH}" ]]; then
