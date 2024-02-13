@@ -1,9 +1,10 @@
+# Docker compose v3 sadly doesn't support 'extends' and
+# we have can't define a common base between both targts
+
 version: "3.8"
 services:
   kopia:
-    extends:
-      file: base.yml
-      service: kopia
+    image: "randombytedeveloper/my-kopia:v0.7.2"
     ports:
       - "2000:51515"
     # enables the container to mount SMB/CIFS share
@@ -11,15 +12,26 @@ services:
       - SYS_ADMIN
       - DAC_READ_SEARCH
     environment:
+      KOPIA_UI_USER: ${KOPIA_UI_USER}
+      KOPIA_UI_PASS_SECRET_PATH: ${KOPIA_UI_PASS_SECRET_PATH}
+      SOURCE_SERVER: ${SOURCE_SERVER}
+      SOURCE_USER: ${SOURCE_USER}
+      SOURCE_PASS_SECRET_PATH: ${SOURCE_PASS_SECRET_PATH}
       TARGET_SERVER: ${TARGET_SERVER}
       TARGET_USER: ${TARGET_USER}
       TARGET_PASS_SECRET_PATH: ${TARGET_PASS_SECRET_PATH}
       REPO_PASS_SECRET_PATH: ${REPO_PASS_SECRET_PATH}
     secrets:
+      - KOPIA_UI_PASS
+      - SOURCE_PASS
       - TARGET_PASS
       - REPO_PASS
+secrets:
+  KOPIA_UI_PASS:
+    external: true
+  SOURCE_PASS:
+    external: true
   TARGET_PASS:
     external: true
   REPO_PASS:
     external: true
-    
