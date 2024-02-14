@@ -4,7 +4,7 @@
 version: "3.8"
 services:
   kopia:
-    image: "randombytedeveloper/my-kopia:v0.7.2"
+    image: "randombytedeveloper/my-kopia:v0.7.3"
     ports:
       - "3000:51515"
     environment:
