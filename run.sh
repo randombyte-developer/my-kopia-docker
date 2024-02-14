@@ -5,6 +5,7 @@ source_server="${SOURCE_SERVER}"
 source_user="${SOURCE_USER}"
 target_server="${TARGET_SERVER}"
 target_user="${TARGET_USER}"
+max_upload_speed="${MAX_UPLOAD_SPEED}"
 
 if [[ -n "${KOPIA_UI_PASS_SECRET_PATH}" ]]; then
 	echo "Reading kopia_ui_pass from ${KOPIA_UI_PASS_SECRET_PATH}"
@@ -44,6 +45,7 @@ while [[ "$#" -gt 0 ]]
 			--target_pass) target_pass="$2"; shift;;
 			--repo_pass) repo_pass="$2"; shift;;
 			--b2_reconnect_token) b2_reconnect_token="$2"; shift;;
+			--max_upload_speed) max_upload_speed="$2"; shift;;
 		esac
 	shift
 done
@@ -88,10 +90,14 @@ if [[ $target_server ]] && [[ $target_user ]] && [[ $target_pass ]] && [[ $repo_
 	echo "Listing files in /mnt/target"
 	ls /mnt/target
 
+	echo "Connecting to repo at /mnt/target"
 	kopia repository connect filesystem --path=/mnt/target --override-hostname=kopia --override-username=kopia --password=$repo_pass
+	echo "Starting server"
 	kopia server start --insecure --address=0.0.0.0:51515 --server-username=$kopia_ui_user --server-password=$kopia_ui_pass
-elif [[ $b2_reconnect_token ]]; then
-	kopia repository connect from-config --token=$b2_reconnect_token --override-hostname=kopia --override-username=kopia
+elif [[ $b2_reconnect_token ]] && [[ $max_upload_speed ]]; then
+	echo "Connecting to B2 repo with max upload speed of $max_upload_speed"
+	kopia repository connect from-config --token=$b2_reconnect_token --max-upload-speed=$max_upload_speed --override-hostname=kopia --override-username=kopia
+	echo "Starting server"
 	kopia server start --insecure --address=0.0.0.0:51515 --server-username=$kopia_ui_user --server-password=$kopia_ui_pass
 else
 	echo "No target SMB share or B2 bucket given. Exiting."

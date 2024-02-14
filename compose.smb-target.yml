@@ -4,9 +4,9 @@
 version: "3.8"
 services:
   kopia:
-    image: "randombytedeveloper/my-kopia:v0.7.3"
+    image: "randombytedeveloper/my-kopia:v0.8"
     ports:
-      - "2000:51515"
+      - "${PORT}:51515"
     # enables the container to mount SMB/CIFS share
     cap_add:
       - SYS_ADMIN
