@@ -102,10 +102,14 @@ if [[ $target_server ]] && [[ $target_user ]] && [[ $target_pass ]] && [[ $repo_
 	echo "Listing files in /mnt/target"
 	ls /mnt/target
 
+	echo "Connecting to repo at /mnt/target"
 	kopia repository connect filesystem "${common_repo_parameters[@]}" --path=/mnt/target  --password=$repo_pass
+	echo "Starting server"
 	kopia server start "${common_server_parameters[@]}"  
 elif [[ $b2_reconnect_token ]]; then
+	echo "Connecting to B2 repo"
 	kopia repository connect from-config "${common_repo_parameters[@]}" --token=$b2_reconnect_token
+	echo "Starting server"
 	kopia server start "${common_server_parameters[@]}"
 else
 	echo "No target SMB share or B2 bucket given. Exiting."
