@@ -84,14 +84,6 @@ echo "Listing files in /mnt/source"
 ls /mnt/source
 
 common_repo_parameters=("--override-hostname=kopia" "--override-username=kopia")
-if [[ -n $max_upload_speed ]]; then
-	common_repo_parameters+=(--max-upload-speed=$max_upload_speed)
-	echo "Setting max upload speed to $max_upload_speed"
-fi
-if [[ -n $max_download_speed ]]; then
-	common_repo_parameters+=(--max-download-speed=$max_download_speed)
-	echo "Setting max download speed to $max_download_speed"
-fi
 common_server_parameters=("--insecure" "--address=0.0.0.0:51515" "--server-username=$kopia_ui_user" "--server-password=$kopia_ui_pass")
 
 if [[ $target_server ]] && [[ $target_user ]] && [[ $target_pass ]] && [[ $repo_pass ]]; then
@@ -110,6 +102,14 @@ if [[ $target_server ]] && [[ $target_user ]] && [[ $target_pass ]] && [[ $repo_
 elif [[ $b2_reconnect_token ]]; then
 	echo "Connecting to B2 repo"
 	kopia repository connect from-config "${common_repo_parameters[@]}" --token=$b2_reconnect_token
+	if [[ -n $max_upload_speed ]]; then
+		echo "Setting max upload speed to $max_upload_speed"
+		kopia repository throttle set --upload-bytes-per-second=$max_upload_speed
+	fi
+	if [[ -n $max_download_speed ]]; then
+		echo "Setting max download speed to $max_download_speed"
+		kopia repository throttle set --download-bytes-per-second=$max_download_speed
+	fi
 	echo "Starting server"
 	kopia server start "${common_server_parameters[@]}"
 else
