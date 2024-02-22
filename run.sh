@@ -5,7 +5,8 @@ source_server="${SOURCE_SERVER}"
 source_user="${SOURCE_USER}"
 target_server="${TARGET_SERVER}"
 target_user="${TARGET_USER}"
-max_upload_speed="${MAX_UPLOAD_SPEED}"
+max_upload="${MAX_UPLOAD}"
+max_download="${MAX_DOWNLOAD}"
 
 if [[ -n "${KOPIA_UI_PASS_SECRET_PATH}" ]]; then
 	echo "Reading kopia_ui_pass from ${KOPIA_UI_PASS_SECRET_PATH}"
@@ -75,11 +76,22 @@ if [[ -z $source_pass ]]; then
 	exit 1
 fi
 
-echo "Mounting source SMB share $source_server"
+echo "Mounting source SMB share $source_server readonly"
 mkdir /mnt/source
 mount -t cifs $source_server /mnt/source -o ro,username=$source_user,password=$source_pass
 echo "Listing files in /mnt/source"
 ls /mnt/source
+
+common_repo_parameters=("--override-hostname=kopia" "--override-username=kopia")
+if [[ -n $max_upload ]]; then
+	common_repo_parameters+=(--max-upload-speed=$max_upload)
+	echo "Setting max upload speed to $max_upload"
+fi
+if [[ -n $max_download ]]; then
+	common_repo_parameters+=(--max-download-speed=$max_download)
+	echo "Setting max download speed to $max_download"
+fi
+common_server_parameters=("--insecure" "--address=0.0.0.0:51515" "--server-username=$kopia_ui_user" "--server-password=$kopia_ui_pass")
 
 if [[ $target_server ]] && [[ $target_user ]] && [[ $target_pass ]] && [[ $repo_pass ]]; then
 	echo "Mounting target SMB share $target_server"
@@ -90,15 +102,11 @@ if [[ $target_server ]] && [[ $target_user ]] && [[ $target_pass ]] && [[ $repo_
 	echo "Listing files in /mnt/target"
 	ls /mnt/target
 
-	echo "Connecting to repo at /mnt/target"
-	kopia repository connect filesystem --path=/mnt/target --override-hostname=kopia --override-username=kopia --password=$repo_pass
-	echo "Starting server"
-	kopia server start --insecure --address=0.0.0.0:51515 --server-username=$kopia_ui_user --server-password=$kopia_ui_pass
-elif [[ $b2_reconnect_token ]] && [[ $max_upload_speed ]]; then
-	echo "Connecting to B2 repo with max upload speed of $max_upload_speed"
-	kopia repository connect from-config --token=$b2_reconnect_token --max-upload-speed=$max_upload_speed --override-hostname=kopia --override-username=kopia
-	echo "Starting server"
-	kopia server start --insecure --address=0.0.0.0:51515 --server-username=$kopia_ui_user --server-password=$kopia_ui_pass
+	kopia repository connect filesystem "${common_repo_parameters[@]}" --path=/mnt/target  --password=$repo_pass
+	kopia server start "${common_server_parameters[@]}"  
+elif [[ $b2_reconnect_token ]]; then
+	kopia repository connect from-config "${common_repo_parameters[@]}" --token=$b2_reconnect_token
+	kopia server start "${common_server_parameters[@]}"
 else
 	echo "No target SMB share or B2 bucket given. Exiting."
 	exit 1
