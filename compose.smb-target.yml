@@ -1,10 +1,10 @@
 # Docker compose v3 sadly doesn't support 'extends' and
-# we have can't define a common base between both targts
+# we can't define a common base between both targts
 
 version: "3.8"
 services:
   kopia:
-    image: "randombytedeveloper/my-kopia:v0.8"
+    image: "randombytedeveloper/my-kopia:v0.9"
     ports:
       - "${PORT}:51515"
     # enables the container to mount SMB/CIFS share

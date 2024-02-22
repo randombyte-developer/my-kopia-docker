@@ -1,10 +1,10 @@
 # Docker compose v3 sadly doesn't support 'extends' and
-# we have can't define a common base between both targts
+# we can't define a common base between both targts
 
 version: "3.8"
 services:
   kopia:
-    image: "randombytedeveloper/my-kopia:v0.8"
+    image: "randombytedeveloper/my-kopia:v0.9"
     ports:
       - "${PORT}:51515"
     environment:
@@ -15,6 +15,7 @@ services:
       SOURCE_PASS_SECRET_PATH: ${SOURCE_PASS_SECRET_PATH}
       B2_RECONNECT_TOKEN_SECRET_PATH: ${B2_RECONNECT_TOKEN_SECRET_PATH}
       MAX_UPLOAD_SPEED: ${MAX_UPLOAD_SPEED}
+      MAX_DOWNLOAD_SPEED: ${MAX_DOWNLOAD_SPEED}
     secrets:
       - KOPIA_UI_PASS
       - SOURCE_PASS

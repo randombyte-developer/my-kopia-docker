@@ -5,8 +5,8 @@ source_server="${SOURCE_SERVER}"
 source_user="${SOURCE_USER}"
 target_server="${TARGET_SERVER}"
 target_user="${TARGET_USER}"
-max_upload="${MAX_UPLOAD}"
-max_download="${MAX_DOWNLOAD}"
+max_upload_speed="${MAX_UPLOAD_SPEED}"
+max_download_speed="${MAX_DOWNLOAD_SPEED}"
 
 if [[ -n "${KOPIA_UI_PASS_SECRET_PATH}" ]]; then
 	echo "Reading kopia_ui_pass from ${KOPIA_UI_PASS_SECRET_PATH}"
@@ -47,6 +47,7 @@ while [[ "$#" -gt 0 ]]
 			--repo_pass) repo_pass="$2"; shift;;
 			--b2_reconnect_token) b2_reconnect_token="$2"; shift;;
 			--max_upload_speed) max_upload_speed="$2"; shift;;
+			--max_download_speed) max_download_speed="$2"; shift;;
 		esac
 	shift
 done
@@ -83,13 +84,13 @@ echo "Listing files in /mnt/source"
 ls /mnt/source
 
 common_repo_parameters=("--override-hostname=kopia" "--override-username=kopia")
-if [[ -n $max_upload ]]; then
-	common_repo_parameters+=(--max-upload-speed=$max_upload)
-	echo "Setting max upload speed to $max_upload"
+if [[ -n $max_upload_speed ]]; then
+	common_repo_parameters+=(--max-upload-speed=$max_upload_speed)
+	echo "Setting max upload speed to $max_upload_speed"
 fi
-if [[ -n $max_download ]]; then
-	common_repo_parameters+=(--max-download-speed=$max_download)
-	echo "Setting max download speed to $max_download"
+if [[ -n $max_download_speed ]]; then
+	common_repo_parameters+=(--max-download-speed=$max_download_speed)
+	echo "Setting max download speed to $max_download_speed"
 fi
 common_server_parameters=("--insecure" "--address=0.0.0.0:51515" "--server-username=$kopia_ui_user" "--server-password=$kopia_ui_pass")
 
