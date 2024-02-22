@@ -7,6 +7,10 @@ services:
     image: "randombytedeveloper/my-kopia:v0.9.2"
     ports:
       - "${PORT}:51515"
+    # enables the container to mount SMB/CIFS share
+    cap_add:
+      - SYS_ADMIN
+      - DAC_READ_SEARCH
     environment:
       KOPIA_UI_USER: ${KOPIA_UI_USER}
       KOPIA_UI_PASS_SECRET_PATH: ${KOPIA_UI_PASS_SECRET_PATH}
