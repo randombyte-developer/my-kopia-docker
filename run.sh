@@ -33,6 +33,7 @@ for secret_variable_name in ${!secrets[@]}; do
 	declare -n secret_variable=$secret_variable_name
 	secret_name=secrets[${key}]
 	secret_path="/run/secrets/$secret_name"
+	echo "Checking if $secret_path exists"
 	if [[ -f "$secret_path" ]]; then
 		echo "Reading $secret_variable_name from $secret_path"
 		secret_variable=$(<"$secret_path")
@@ -70,7 +71,7 @@ required_parameters=(
 )
 for parameter in "${required_parameters[@]}"; do
 	if [[ -z ${!parameter} ]]; then
-		echo "Parameer $parameter must not be empty!"
+		echo "Parameter $parameter must not be empty!"
 		exit 1
 	fi
 done
