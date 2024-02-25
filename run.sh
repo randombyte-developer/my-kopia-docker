@@ -31,7 +31,7 @@ secrets_names[b2_key]=B2_KEY
 # Read secrets
 for secret_variable_name in ${!secrets_names[@]}; do
 	declare -n secret_variable=$secret_variable_name
-	secret_name=${secrets_names[$key]}
+	secret_name=${secrets_names[$secret_variable_name]}
 	secret_path="/run/secrets/$secret_name"
 	echo "Checking if $secret_path exists"
 	if [[ -f "$secret_path" ]]; then
