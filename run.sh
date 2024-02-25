@@ -100,7 +100,7 @@ if [[ $target_server ]] && [[ $target_user ]] && [[ $target_pass ]]; then
 	kopia server start "${common_server_parameters[@]}"  
 elif [[ $b2_bucket_name ]] && [[ $b2_key_id ]] && [[ $b2_key ]]; then
 	echo "Connecting to B2 repo"
-	kopia repository connect from-config "${common_repo_parameters[@]}" --bucket=$b2_bucket_name --key-id=$b2_key_id --key=$b2_key
+	kopia repository connect b2 "${common_repo_parameters[@]}" --bucket=$b2_bucket_name --key-id=$b2_key_id --key=$b2_key
 	if [[ -n $max_upload_speed ]]; then
 		echo "Setting max upload speed to $max_upload_speed"
 		kopia repository throttle set --upload-bytes-per-second=$max_upload_speed
