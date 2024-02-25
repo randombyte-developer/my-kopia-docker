@@ -14,24 +14,24 @@ b2_bucket_name="${B2_BUCKET_NAME}"
 max_upload_speed="${MAX_UPLOAD_SPEED}"
 max_download_speed="${MAX_DOWNLOAD_SPEED}"
 
-declare -A secrets
+declare -A secrets_names
 
 # General
-secrets[kopia_ui_pass]=KOPIA_UI_PASS
-secrets[source_pass]=SOURCE_PASS
-secrets[repo_pass]=REPO_PASS
+secrets_names[kopia_ui_pass]=KOPIA_UI_PASS
+secrets_names[source_pass]=SOURCE_PASS
+secrets_names[repo_pass]=REPO_PASS
 
 # For SMB targets
-secrets[target_pass]=TARGET_PASS
+secrets_names[target_pass]=TARGET_PASS
 
 # For B2 targets
-secrets[b2_key_id]=B2_KEY_ID
-secrets[b2_key]=B2_KEY
+secrets_names[b2_key_id]=B2_KEY_ID
+secrets_names[b2_key]=B2_KEY
 
 # Read secrets
-for secret_variable_name in ${!secrets[@]}; do
+for secret_variable_name in ${!secrets_names[@]}; do
 	declare -n secret_variable=$secret_variable_name
-	secret_name=secrets[${key}]
+	secret_name=${secrets_names[$key]}
 	secret_path="/run/secrets/$secret_name"
 	echo "Checking if $secret_path exists"
 	if [[ -f "$secret_path" ]]; then
