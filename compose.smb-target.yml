@@ -4,7 +4,7 @@
 version: "3.8"
 services:
   kopia:
-    image: "randombytedeveloper/my-kopia:v0.9.2"
+    image: "randombytedeveloper/my-kopia:v0.10"
     ports:
       - "${PORT}:51515"
     # enables the container to mount SMB/CIFS share
@@ -13,14 +13,10 @@ services:
       - DAC_READ_SEARCH
     environment:
       KOPIA_UI_USER: ${KOPIA_UI_USER}
-      KOPIA_UI_PASS_SECRET_PATH: ${KOPIA_UI_PASS_SECRET_PATH}
       SOURCE_SERVER: ${SOURCE_SERVER}
       SOURCE_USER: ${SOURCE_USER}
-      SOURCE_PASS_SECRET_PATH: ${SOURCE_PASS_SECRET_PATH}
       TARGET_SERVER: ${TARGET_SERVER}
       TARGET_USER: ${TARGET_USER}
-      TARGET_PASS_SECRET_PATH: ${TARGET_PASS_SECRET_PATH}
-      REPO_PASS_SECRET_PATH: ${REPO_PASS_SECRET_PATH}
     secrets:
       - KOPIA_UI_PASS
       - SOURCE_PASS
