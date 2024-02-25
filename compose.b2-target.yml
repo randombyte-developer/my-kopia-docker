@@ -29,5 +29,5 @@ secrets:
     external: true
   SOURCE_PASS:
     external: true
-  B2_RECONNECT_TOKEN:
+  ${B2_RECONNECT_TOKEN_SECRET}:
     external: true
