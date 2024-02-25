@@ -4,7 +4,7 @@
 version: "3.8"
 services:
   kopia:
-    image: "randombytedeveloper/my-kopia:v0.10.3"
+    image: "randombytedeveloper/my-kopia:v0.10.4"
     ports:
       - "${PORT}:51515"
     # enables the container to mount SMB/CIFS share
