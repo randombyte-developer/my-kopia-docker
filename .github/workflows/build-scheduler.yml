@@ -9,5 +9,5 @@ jobs:
     uses: ./.github/workflows/build-and-push-image.yml
     with:
       image-name: randombytedeveloper/my-kopia-scheduler
-      docker-file: ./scheduler/Dockerfile
+      image-directory: ./scheduler/
     secrets: inherit

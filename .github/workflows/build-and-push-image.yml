@@ -6,7 +6,7 @@ on:
       image-name:
         required: true
         type: string
-      docker-file:
+      image-directory:
         required: true
         type: string
     secrets:
@@ -43,10 +43,11 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
+          context: ${{ inputs.image-directory }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/arm64 # Raspberry Pi 4
-          file: ${{ inputs.docker-file }}
+          file: ${{ inputs.image-directory }}/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
