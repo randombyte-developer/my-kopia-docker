@@ -1,8 +1,10 @@
 version: "3.8"
 services:
   scheduler:
-    image: "randombytedeveloper/my-kopia-scheduler:v0.11.3"
+    image: "randombytedeveloper/my-kopia-scheduler:v0.11.4"
     environment:
-      KOPIA_UI_USER: ${KOPIA_UI_USER}
+      CONTAINER_NAMES: ${CONTAINER_NAMES}
+      COMMAND: ${COMMAND}
+      SLEEP_INTERVAL: ${SLEEP_INTERVAL}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
