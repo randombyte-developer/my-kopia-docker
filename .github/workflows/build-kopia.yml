@@ -1,0 +1,13 @@
+name: Build and publish kopia Docker images
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build_and_push_kopia:
+    uses: ./.github/workflows/build-and-push-image.yml
+    with:
+      image-name: randombytedeveloper/my-kopia
+      docker-file: ./kopia/Dockerfile
+    secrets: inherit

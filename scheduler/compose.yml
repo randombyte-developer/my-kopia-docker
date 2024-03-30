@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+  scheduler:
+    image: "randombytedeveloper/my-kopia-scheduler:v0.11.0"
+    environment:
+      KOPIA_UI_USER: ${KOPIA_UI_USER}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
