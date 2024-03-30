@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   scheduler:
-    image: "randombytedeveloper/my-kopia-scheduler:v0.11.0"
+    image: "randombytedeveloper/my-kopia-scheduler:v0.11.2"
     environment:
       KOPIA_UI_USER: ${KOPIA_UI_USER}
     volumes:
