@@ -1,10 +1,11 @@
 version: "3.8"
 services:
   scheduler:
-    image: "randombytedeveloper/my-kopia-scheduler:v0.11.4"
+    image: "randombytedeveloper/my-kopia-scheduler:v0.11.5"
     environment:
       CONTAINER_NAMES: ${CONTAINER_NAMES}
       COMMAND: ${COMMAND}
       SLEEP_INTERVAL: ${SLEEP_INTERVAL}
     volumes:
+      # Mounting the docker socket to be able to control all other containers
       - /var/run/docker.sock:/var/run/docker.sock
