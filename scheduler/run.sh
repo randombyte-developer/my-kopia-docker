@@ -9,13 +9,12 @@ while true; do
     sleep $((($(date -f - +%s- <<<$START_TIME$' tomorrow\nnow')0)%86400))
     for container_name in "${container_names[@]}"; do
         # Check if the container exists (might be down due to maintenance)
-        if container_id=$(docker ps --filter "name=$container_name" --format "{{.ID}}"); then
-            time="`date "+%Y-%m-%d %H:%M:%S"`"
-            echo "$time $container_name $container_id: Executing $COMMAND"
-            docker exec "$container_id" sh -c "$COMMAND"
-            sleep "$SLEEP_INTERVAL"
-        else
-            echo "Container $container_name does not exist."
-        fi
+        container_id=$(docker ps --filter "name=$container_name" --format "{{.ID}}")
+        echo "============================================================================="
+        echo "`date "+%Y-%m-%d %H:%M:%S"` $container_name $container_id: Executing $COMMAND"
+        docker exec "$container_id" sh -c "$COMMAND"
+        echo "`date "+%Y-%m-%d %H:%M:%S"`: Command finished"
+        echo "============================================================================="
+        sleep "$SLEEP_INTERVAL"
     done
 done
