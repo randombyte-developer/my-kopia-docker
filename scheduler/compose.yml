@@ -1,9 +1,10 @@
 version: "3.8"
 services:
   scheduler:
-    image: "randombytedeveloper/my-kopia-scheduler:v0.11.6"
+    image: "randombytedeveloper/my-kopia-scheduler:v0.11.7"
     environment:
       CONTAINER_NAMES: ${CONTAINER_NAMES}
+      START_TIME: ${START_TIME}
       COMMAND: ${COMMAND}
       SLEEP_INTERVAL: ${SLEEP_INTERVAL}
     volumes:
