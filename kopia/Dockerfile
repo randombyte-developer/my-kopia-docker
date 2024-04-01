@@ -7,7 +7,8 @@ ENV DEBIAN_FRONTEND="noninteractive" \
     KOPIA_LOG_DIR=/app/logs \
     KOPIA_CACHE_DIRECTORY=/app/cache \
     KOPIA_PERSIST_CREDENTIALS_ON_CONNECT=true \
-    KOPIA_CHECK_FOR_UPDATES=false
+    KOPIA_CHECK_FOR_UPDATES=false \
+    TZ=CET
 
 # According to the Docker image best practices docs an apt clean is automatically run for Ubuntu images (which kopia uses)
 # https://docs.docker.com/develop/develop-images/instructions/#apt-get
