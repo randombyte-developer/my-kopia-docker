@@ -12,7 +12,7 @@ while true; do
         echo "============================================================================="
         echo "`date "+%Y-%m-%d %H:%M:%S"` $container_name $container_id: Executing $COMMAND"
 
-        # Report start of backup
+        # Report start of command
         curl -X PUT -F "container_name=$container_name" -F "state=0" $HASS_WEBHOOK_URL
 
         docker exec "$container_id" sh -c "$COMMAND"
@@ -22,7 +22,7 @@ while true; do
             state=2 # Error
         fi
 
-        # Report end of backup with state
+        # Report end of command with state
         curl -X PUT -F "container_name=$container_name" -F "state=$state" $HASS_WEBHOOK_URL
 
         echo "`date "+%Y-%m-%d %H:%M:%S"`: Command finished"

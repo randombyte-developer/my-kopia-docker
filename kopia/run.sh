@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# The default soft limit for the content files (the actual data) is 5.2 GB. 
+set_cache_soft_limit() {
+	echo "Setting content cache soft limit"
+	kopia cache set --content-cache-size-mb=2000
+}
+
 # General
 kopia_ui_user="${KOPIA_UI_USER}"
 source_server="${SOURCE_SERVER}"
@@ -96,11 +102,13 @@ if [[ $target_server ]] && [[ $target_user ]] && [[ $target_pass ]]; then
 
 	echo "Connecting to repo at /mnt/target"
 	kopia repository connect filesystem "${common_repo_parameters[@]}" --path=/mnt/target 
+	set_cache_soft_limit
 	echo "Starting server"
 	kopia server start "${common_server_parameters[@]}"  
 elif [[ $b2_bucket_name ]] && [[ $b2_key_id ]] && [[ $b2_key ]]; then
 	echo "Connecting to B2 repo"
 	kopia repository connect b2 "${common_repo_parameters[@]}" --bucket=$b2_bucket_name --key-id=$b2_key_id --key=$b2_key
+	set_cache_soft_limit
 	if [[ -n $max_upload_speed ]]; then
 		echo "Setting max upload speed to $max_upload_speed"
 		kopia repository throttle set --upload-bytes-per-second=$max_upload_speed
