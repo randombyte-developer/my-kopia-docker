@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# The default soft limit for the content files (the actual data) is 5.2 GB. 
-set_cache_soft_limit() {
-	echo "Setting content cache soft limit"
-	kopia cache set --content-cache-size-mb=2000
-}
-
 # General
 kopia_ui_user="${KOPIA_UI_USER}"
 source_server="${SOURCE_SERVER}"
@@ -20,6 +14,11 @@ b2_bucket_name="${B2_BUCKET_NAME}"
 max_upload_speed="${MAX_UPLOAD_SPEED}"
 max_download_speed="${MAX_DOWNLOAD_SPEED}"
 
+# For S3 targets
+s3_endpoint="${S3_ENDPOINT}"
+s3_bucket="${S3_BUCKET}"
+s3_access_key="${S3_ACCESS_KEY}"
+
 declare -A secrets_names
 
 # General
@@ -33,6 +32,9 @@ secrets_names[target_pass]=TARGET_PASS
 # For B2 targets
 secrets_names[b2_key_id]=B2_KEY_ID
 secrets_names[b2_key]=B2_KEY
+
+# For S3 targets
+secrets_names[s3_secret_access_key]=S3_SECRET_ACCESS_KEY
 
 # Read secrets
 for secret_variable_name in ${!secrets_names[@]}; do
@@ -91,6 +93,7 @@ ls /mnt/source
 common_repo_parameters=("--override-hostname=kopia" "--override-username=kopia" "--password=$repo_pass")
 common_server_parameters=("--insecure" "--address=0.0.0.0:51515" "--server-username=$kopia_ui_user" "--server-password=$kopia_ui_pass")
 
+# Connect to repo
 if [[ $target_server ]] && [[ $target_user ]] && [[ $target_pass ]]; then
 	echo "Mounting target SMB share $target_server"
 	mkdir /mnt/target
@@ -102,13 +105,9 @@ if [[ $target_server ]] && [[ $target_user ]] && [[ $target_pass ]]; then
 
 	echo "Connecting to repo at /mnt/target"
 	kopia repository connect filesystem "${common_repo_parameters[@]}" --path=/mnt/target 
-	set_cache_soft_limit
-	echo "Starting server"
-	kopia server start "${common_server_parameters[@]}"  
 elif [[ $b2_bucket_name ]] && [[ $b2_key_id ]] && [[ $b2_key ]]; then
 	echo "Connecting to B2 repo"
 	kopia repository connect b2 "${common_repo_parameters[@]}" --bucket=$b2_bucket_name --key-id=$b2_key_id --key=$b2_key
-	set_cache_soft_limit
 	if [[ -n $max_upload_speed ]]; then
 		echo "Setting max upload speed to $max_upload_speed"
 		kopia repository throttle set --upload-bytes-per-second=$max_upload_speed
@@ -117,9 +116,19 @@ elif [[ $b2_bucket_name ]] && [[ $b2_key_id ]] && [[ $b2_key ]]; then
 		echo "Setting max download speed to $max_download_speed"
 		kopia repository throttle set --download-bytes-per-second=$max_download_speed
 	fi
-	echo "Starting server"
-	kopia server start "${common_server_parameters[@]}"
+	
+elif [[ $s3_endpoint ]] && [[ $s3_bucket ]] && [[ $s3_access_key ]]  && [[ $s3_secret_access_key ]]; then
+	echo "Connecting to S3 bucket"
+	kopia repository connect s3 "${common_repo_parameters[@]}" --endpoint=$s3_endpoint --bucket=$s3_bucket --access-key=$s3_access_key --secret-access-key=$s3_secret_access_key
 else
 	echo "No target SMB share or B2 bucket given. Exiting."
 	exit 1
 fi
+
+# The default soft limit for the content files (the actual data) is 5.2 GB which might be too much if multiple containers run alongside each other for the hosts filesystem.
+echo "Setting content cache soft limit"
+kopia cache set --content-cache-size-mb=2000
+
+# Start server
+echo "Starting server"
+kopia server start "${common_server_parameters[@]}"

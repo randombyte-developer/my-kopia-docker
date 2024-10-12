@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   scheduler:
-    image: "randombytedeveloper/my-kopia-scheduler:v0.13.0"
+    image: "randombytedeveloper/my-kopia-scheduler:v0.14.0"
     environment:
       CONTAINER_NAMES: ${CONTAINER_NAMES}
       START_TIME: ${START_TIME}
