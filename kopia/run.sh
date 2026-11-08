@@ -86,7 +86,11 @@ done
 
 echo "Mounting source SMB share $source_server readonly"
 mkdir /mnt/source
-mount -t cifs $source_server /mnt/source -o ro,username=$source_user,password=$source_pass
+if ! mount -t cifs $source_server /mnt/source -o ro,username=$source_user,password=$source_pass; then
+	# Without the source the server would back up an empty directory
+	echo "Mounting source SMB share failed. Exiting."
+	exit 1
+fi
 echo "Listing files in /mnt/source"
 ls /mnt/source
 
@@ -98,7 +102,10 @@ if [[ $target_server ]] && [[ $target_user ]] && [[ $target_pass ]]; then
 	echo "Mounting target SMB share $target_server"
 	mkdir /mnt/target
 	# noserverino is necessary if a Fritzbox USB/NAS SMB share is used, otherwise there is an error "Stale file handle" when reading data
-	mount -t cifs $target_server /mnt/target -o noserverino,username=$target_user,password=$target_pass
+	if ! mount -t cifs $target_server /mnt/target -o noserverino,username=$target_user,password=$target_pass; then
+		echo "Mounting target SMB share failed. Exiting."
+		exit 1
+	fi
 	
 	echo "Listing files in /mnt/target"
 	ls /mnt/target
