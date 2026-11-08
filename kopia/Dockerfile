@@ -1,4 +1,4 @@
-FROM kopia/kopia:0.17.0
+FROM kopia/kopia:0.23.1
 
 ENV DEBIAN_FRONTEND="noninteractive" \
     TERM="xterm-256color" \
