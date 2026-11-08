@@ -4,18 +4,25 @@
 # The elements must not contain spaces.
 container_names=(${CONTAINER_NAMES//;/ })
 
+# Reports the state of a container to Home Assistant (0 = running, 1 = success, 2 = error).
+# Skipped if no webhook URL is configured. Times out so a hanging Home Assistant can't block the backups.
+report_state() {
+    [ -z "$HASS_WEBHOOK_URL" ] && return
+    curl -fsS --max-time 10 -X PUT -F "container_name=$1" -F "state=$2" "$HASS_WEBHOOK_URL" \
+        || echo "Failed to report state $2 for $1 to Home Assistant"
+}
+
 while true; do
     # What until the specified time each day and then sequentially execute the command with the given delay inbetween each container
     sleep $((($(date -f - +%s- <<<$START_TIME$' tomorrow\nnow')0)%86400))
     for container_name in "${container_names[@]}"; do
-        container_id=$(docker ps --filter "name=$container_name" --format "{{.ID}}")
         echo "============================================================================="
-        echo "`date "+%Y-%m-%d %H:%M:%S"` $container_name $container_id: Executing $COMMAND"
+        echo "`date "+%Y-%m-%d %H:%M:%S"` $container_name: Executing $COMMAND"
 
         # Report start of command
-        curl -X PUT -F "container_name=$container_name" -F "state=0" $HASS_WEBHOOK_URL
+        report_state "$container_name" 0
 
-        docker exec "$container_id" sh -c "$COMMAND"
+        docker exec "$container_name" sh -c "$COMMAND"
         if [ $? -eq 0 ]; then
             state=1 # Success
         else
@@ -23,7 +30,7 @@ while true; do
         fi
 
         # Report end of command with state
-        curl -X PUT -F "container_name=$container_name" -F "state=$state" $HASS_WEBHOOK_URL
+        report_state "$container_name" "$state"
 
         echo "`date "+%Y-%m-%d %H:%M:%S"`: Command finished"
         echo "============================================================================="
